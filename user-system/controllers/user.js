@@ -18,7 +18,11 @@ exports.signup = (req, res) =>{
 }
 //get all users GET
 exports.getAll = async (req,res)=>{
-    const userList = await User.find();
+    const userList = await User.find()
+    .populate({
+        path: 'grade',
+        select: "grade badges"
+    });
 
         if(!userList) {
             res.status(400).json({
@@ -33,8 +37,40 @@ exports.getAll = async (req,res)=>{
     }
     res.send(userList);
 };
+/*
+exports.postLevel = (req, res) =>{
+    const level = new Level(req.body);
+    level.save((err, level) =>{
+        if(err){
+            return res.status(400).json({
+                error: "cannot add level"
+            })
+        }
 
-/*exports.getAll = (req, res) => {
+        return res.json({
+            message: "success",
+            level
+        })
+    })
+}
+
+exports.getLevel = async (req,res)=>{
+    const levelList = await Level.find();
+        if(!levelList) {
+            res.status(400).json({
+                error: "Connot get all levels",
+                success: false
+            });
+
+            return res.json({
+                message: "success",
+                levelList
+            })
+    }
+    res.send(levelList);
+};
+
+exports.getAll = (req, res) => {
     const user = await User.find();
     user.find((err, user) => {
         if(err){

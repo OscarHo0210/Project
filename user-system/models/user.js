@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 const crypto = require("crypto");
 const uuid = require('uuid');
 uuid.v1();
 
-const userSchema = new mongoose.Schema({
+const userSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -21,13 +22,30 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    levels: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Level'
+    }],
     encry_password: {
         type: String,
         require: true
     }
 })
 
-module.exports = mongoose.model("User", userSchema);
+const levelSchema = mongoose.Schema({
+    grade: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        require: true
+    },
+    badges: {
+        type: String,
+        require: true
+    }
+});
+
+module.exports = mongoose.model('Level', levelSchema);
+module.exports = mongoose.model('User', userSchema);
 
 
 /*

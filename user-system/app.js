@@ -24,10 +24,10 @@ app.use(cookieParser());
 app.use(cors());
 
 //import routes
-const userRoutes = require("./routes/user")
-//use routes
-app.use('/userSystem', userRoutes)
+const userRoutes = require("./routes/route");
 
+//use routes
+app.use('/userSystem', userRoutes);
 
 //connect server
 const port = process.env.PORT || 3000

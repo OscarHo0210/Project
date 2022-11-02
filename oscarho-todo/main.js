@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 app.use(express.json());
 
 //connect to db
-mongoose.connect("mongodb://localhost:27017",{
+mongoose.connect("mongodb+srv://oscar:oscar@cluster0.q7snbas.mongodb.net/?retryWrites=true&w=majority",{
     useNewUrlParser: true,
     useUnifiedTopology: true
 }, (err) =>{
@@ -125,7 +125,11 @@ app.get('/getAll', (req, res) => {
         }
     })
 })
+// 監聽 port，部屬到Heroku用
+var port = process.env.PORT || 3000;
+//app.listen(port);
 
-app.listen(3000, () =>{
-    console.log("on port 3000");
+//module.exports = app;
+app.listen(process.env.PORT || 3000, () =>{
+    console.log("on port");
 })
