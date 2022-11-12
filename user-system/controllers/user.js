@@ -1,7 +1,8 @@
 const User = require("../models/user");
+const Post = require("../models/user")
 
 //signup POST
-exports.signup = (req, res) =>{
+exports.signup = async (req, res) =>{
     const user = new User(req.body);
     user.save((err, user) =>{
         if(err){
@@ -15,14 +16,12 @@ exports.signup = (req, res) =>{
             user
         })
     })
+    const post = new Post(req.body);
+    const postUser = await post.save();
 }
 //get all users GET
 exports.getAll = async (req,res)=>{
     const userList = await User.find()
-    .populate({
-        path: 'grade',
-        select: "grade badges"
-    });
 
         if(!userList) {
             res.status(400).json({
