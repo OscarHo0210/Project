@@ -20,6 +20,7 @@ mongoose.connect(process.env.DATABASE,{
 
 //Use parsing middleware
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
 
@@ -33,6 +34,20 @@ app.use('/userSystem', userRoutes);
 const port = process.env.PORT || 3000
 app.listen(port, () => {
     console.log(`connect port ${port}`);
+});
+
+//JWT
+app.use(function(req, res, next) {
+  if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
+    jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
+      if (err) req.user = undefined;
+      req.user = decode;
+      next();
+    });
+  } else {
+    req.user = undefined;
+    next();
+  }
 });
 
 /*

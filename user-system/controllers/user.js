@@ -1,24 +1,53 @@
 const User = require("../models/user");
-const Post = require("../models/user")
+const Post = require("../models/user");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const bodyParser = require("body-parser");
+const user = require("../models/user");
+
 
 //signup POST
-exports.signup = async (req, res) =>{
-    const user = new User(req.body);
-    user.save((err, user) =>{
-        if(err){
-            return res.status(400).json({
-                error: "cannot add user"
-            })
-        }
+exports.signup = async(req, res) =>{
+    var newUser = new User(req.body);
+    newUser.password = bcrypt.hashSync(req.body.password, 10);
+    newUser.save(function(err, user) {
+      if (err) {
+        return res.status(400).send({
+          message: err
+        });
+      } else {
+        user.password = undefined;
+        return res.json(user);
+      }
+    });
 
-        return res.json({
-            message: "success",
-            user
+    if(!req.body.email || !req.body.password){
+        res.json({
+            success: false,
+            error: "Send needed params"
         })
-    })
-    const post = new Post(req.body);
-    const postUser = await post.save();
-}
+        return
+    }
+};
+
+//login
+exports.login = function(req, res) {
+    User.findOne({
+      email: req.body.email
+    }, function(err, user) {
+      if (err){
+        throw err;
+      }
+      if (!user || !user.comparePassword(req.body.password)) {
+        return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
+      }
+      return res.json({ token: jwt.sign({
+            email: user.email, name: user.lastName}, 'RESTFULAPIs') 
+        });
+    });
+};
+
+
 //get all users GET
 exports.getAll = async (req,res)=>{
     const userList = await User.find()

@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const { Schema } = mongoose;
-const crypto = require("crypto");
-const uuid = require('uuid');
-uuid.v1();
 
 const userSchema = mongoose.Schema({
     name: {
@@ -22,17 +20,24 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    password: {
+        type: String,
+        require: true
+    },
+    date: {
+        type: Date,
+        default: Date.now()
+    },
     post: [{
         type: Schema.Types.ObjectId,
         ref: 'Post',
         require: true
-    }],
-    encry_password: {
-        type: String,
-        require: true
-    }
+    }]
 })
 
+userSchema.methods.comparePassword = function(password){
+    return bcrypt.compareSync(password, this.password);
+};
 
 module.exports = mongoose.model('User', userSchema);
 /*
