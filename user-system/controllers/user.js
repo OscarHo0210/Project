@@ -16,7 +16,6 @@ exports.signup = async(req, res) =>{
         });
       } else {
         user.password = undefined;
-        message: "signup successful";
         return res.json(user);
       }
     });
