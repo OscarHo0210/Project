@@ -3,7 +3,6 @@ const Post = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
-const user = require("../models/user");
 
 
 //signup POST
@@ -17,6 +16,7 @@ exports.signup = async(req, res) =>{
         });
       } else {
         user.password = undefined;
+        message: "signup successful";
         return res.json(user);
       }
     });
@@ -30,19 +30,30 @@ exports.signup = async(req, res) =>{
     }
 };
 
-//login
+//login POST
 exports.login = function(req, res) {
     User.findOne({
       email: req.body.email
-    }, function(err, user) {
+    }, function(err, User) {
       if (err){
         throw err;
       }
-      if (!user || !user.comparePassword(req.body.password)) {
-        return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
+      if (!User) {
+        return res.status(401).json({ 
+            message: 'Authentication failed. Invalid user.' 
+        });
+      } else if (!User.comparePassword(req.body.password)){
+        return res.status(401).json({ 
+            message: 'Authentication failed. Invalid password.' 
+        });
       }
-      return res.json({ token: jwt.sign({
-            email: user.email, name: user.lastName}, 'RESTFULAPIs') 
+      return res.json({ 
+        message: "login successful",
+        token: jwt.sign({
+            email: User.email, 
+            name: User.lastName}, 
+            'RESTFULAPIs',
+            ) 
         });
     });
 };
