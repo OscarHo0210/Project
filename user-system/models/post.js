@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const postSchema = mongoose.Schema({
-    content: {
+    title: {
         type: String,
-        required: [true, 'Content 未填寫']
+        required: [true, 'Title 未填寫']
       },
     user: {
         type: Schema.Types.ObjectId,

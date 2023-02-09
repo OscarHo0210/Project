@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
+const exphbs = require('express-handlebars');
 
+const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -36,12 +38,13 @@ app.listen(port, () => {
     console.log(`connect port ${port}`);
 });
 
+/*
 //JWT
 app.use(function(req, res, next) {
   if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
-    jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
-      if (err) req.user = undefined;
-      req.user = decode;
+    jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
+      if (err) req.body.user = undefined;
+      req.body.user = decode;
       next();
     });
   } else {
@@ -50,11 +53,12 @@ app.use(function(req, res, next) {
   }
 });
 
-/*
-//views
-app.set('views', './views');
-app.set('view engine', 'ejs');
 
+//set view engine
+//app.engine('handlebars', exphbs('defaultLayout: main'));
+//app.set('view engine', 'handlebars');
+
+/*
 app.get('/', (req, res) => {
     res.render('index.ejs', {name: 'Oscar'});
 })*/

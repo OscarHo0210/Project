@@ -1,21 +1,22 @@
 const User = require("../models/user");
 const Post = require("../models/user");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
+//const isAuth = require("../middlewares/isAuth");
 
 
 //signup POST
 exports.signup = async(req, res) =>{
     var newUser = new User(req.body);
-    newUser.password = bcrypt.hashSync(req.body.password, 10);
+    newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
     newUser.save(function(err, user) {
       if (err) {
         return res.status(400).send({
           message: err
         });
       } else {
-        user.password = undefined;
+        user.hash_password = undefined;
         return res.json(user);
       }
     });
@@ -50,13 +51,13 @@ exports.login = function(req, res) {
         message: "login successful",
         token: jwt.sign({
             email: User.email, 
-            name: User.lastName}, 
-            'RESTFULAPIs',
+            name: User.lastName,
+            _id: User._id}, 
+            process.env.JWT_SECRET,
             ) 
         });
     });
 };
-
 
 //get all users GET
 exports.getAll = async (req,res)=>{
@@ -75,6 +76,28 @@ exports.getAll = async (req,res)=>{
     }
     res.send(userList);
 };
+
+exports.loginRequired = function(req, res, next) {
+    if (req.user) {
+      next();
+    } else {
+  
+      return res.status(401).json({ message: 'Unauthorized user!!' });
+    }
+  };
+
+//get user profile
+/*
+exports.userProfile = function(req, res, next) {
+  if (req.user) {
+    res.send(req.user);
+    next();
+  } 
+  else {
+   return res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
 /*
 exports.postLevel = (req, res) =>{
     const level = new Level(req.body);
